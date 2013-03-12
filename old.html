@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>AfterHours.FM - Analytics</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Loading Bootstrap -->
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Loading Flat UI -->
+    <link href="assets/css/flat.css" rel="stylesheet">
+    <link href="assets/css/graph.css" rel="stylesheet">
+    <link rel="shortcut icon" href="images/favicon.ico">
+
+    <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script src="assets/js/jquery.flot.min.js"></script>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements. All other JS at the end of file. -->
+    <!--[if lt IE 9]>
+      <script src="assets/js/html5shiv.js"></script>
+    <![endif]-->
+    
+    <style>html,body{height:100%}body{background:#f2f2f2 ;margin:0}#graph-wrapper{width:640px;margin:0 auto;padding-top:275px}</style>
+  </head>
+  <body>
+  
+  <div class="container">
+	  <!-- Graph HTML -->
+<div id="graph-wrapper">
+	<div class="graph-info">
+		<h6>AfterHours.FM Listeners Analytics</h6>
+	</div>
+
+	<div class="graph-container">
+		<div id="graph-lines"></div>
+		<div id="graph-bars"></div>
+	</div>
+</div>
+<!-- end Graph HTML -->
+  </div>
+  <script>
+$(document).ready(function () {
+
+	// Graph Data ##############################################
+	var graphData = [{
+			// Visits
+			data: [ [6, 1300], [7, 1600], [8, 1900], [9, 2100], [10, 2500], [11, 2200], [12, 2000], [13, 1950], [14, 1900], [15, 2000] ],
+			color: '#71c73e'
+		},
+	];
+
+	// Lines Graph #############################################
+	$.plot($('#graph-lines'), graphData, {
+		series: {
+			points: {
+				show: true,
+				radius: 5
+			},
+			lines: {
+				show: true
+			},
+			shadowSize: 0
+		},
+		grid: {
+			color: '#646464',
+			borderColor: 'transparent',
+			borderWidth: 20,
+			hoverable: true
+		},
+		xaxis: {
+			tickColor: 'transparent',
+			tickDecimals: 2
+		},
+		yaxis: {
+			tickSize: 250
+		}
+	});
+
+	// Bars Graph ##############################################
+	$.plot($('#graph-bars'), graphData, {
+		series: {
+			bars: {
+				show: true,
+				barWidth: .9,
+				align: 'center'
+			},
+			shadowSize: 0
+		},
+		grid: {
+			color: '#646464',
+			borderColor: 'transparent',
+			borderWidth: 20,
+			hoverable: true
+		},
+		xaxis: {
+			tickColor: 'transparent',
+			tickDecimals: 2
+		},
+		yaxis: {
+			tickSize: 1000
+		}
+	});
+
+	// Graph Toggle ############################################
+	$('#graph-bars').hide();
+
+	$('#lines').on('click', function (e) {
+		$('#bars').removeClass('active');
+		$('#graph-bars').fadeOut();
+		$(this).addClass('active');
+		$('#graph-lines').fadeIn();
+		e.preventDefault();
+	});
+
+	$('#bars').on('click', function (e) {
+		$('#lines').removeClass('active');
+		$('#graph-lines').fadeOut();
+		$(this).addClass('active');
+		$('#graph-bars').fadeIn().removeClass('hidden');
+		e.preventDefault();
+	});
+
+	// Tooltip #################################################
+	function showTooltip(x, y, contents) {
+		$('<div id="tooltip">' + contents + '</div>').css({
+			top: y - 16,
+			left: x + 20
+		}).appendTo('body').fadeIn();
+	}
+
+	var previousPoint = null;
+
+	$('#graph-lines, #graph-bars').bind('plothover', function (event, pos, item) {
+		if (item) {
+			if (previousPoint != item.dataIndex) {
+				previousPoint = item.dataIndex;
+				$('#tooltip').remove();
+				var x = item.datapoint[0],
+					y = item.datapoint[1];
+					showTooltip(item.pageX, item.pageY, y + ' listeners on ' + x );
+			}
+		} else {
+			$('#tooltip').remove();
+			previousPoint = null;
+		}
+	});
+
+});
+</script>
+  </body>
+</html>
